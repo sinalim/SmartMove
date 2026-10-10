@@ -42,7 +42,7 @@ SmartMove lets passengers search trips, book seats and pay by card or cash. Admi
 
 ## Folder structure
 - frontend/ - UI pages
-- backend/ - server.js (REST API)
+- backend/ - node.js (REST API)
 - database/ - smartmove_oracle.sql and smartmove_mongo.js
 - schema.sql - copy of the Oracle script
 
