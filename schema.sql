@@ -80,7 +80,7 @@ CREATE TABLE Ticket (
    status        VARCHAR2(15) DEFAULT 'BOOKED' CHECK (status IN ('BOOKED','CANCELLED')),
    boarded       NUMBER(1) DEFAULT 0 CHECK (boarded IN (0,1))
 );
--- FIX: only BOOKED tickets block a seat, so a cancelled seat can be booked again
+
 CREATE UNIQUE INDEX uq_active_seat ON Ticket
    (CASE WHEN status='BOOKED' THEN trip_id END, CASE WHEN status='BOOKED' THEN seat_no END);
 
@@ -491,7 +491,7 @@ SELECT v.vehicle_id, v.reg_number, COUNT(m.maintenance_id) AS service_count, NVL
   FROM Vehicle v LEFT JOIN Maintenance m ON m.vehicle_id=v.vehicle_id
  GROUP BY v.vehicle_id, v.reg_number ORDER BY total_cost DESC;
 
-/* 7. LOGIN QUERY used by the API:
+ 7. LOGIN QUERY used by the API:
    SELECT u.user_id, u.full_name, u.email, u.role, u.status
      FROM App_User u LEFT JOIN Driver d ON d.driver_id=u.user_id
     WHERE (LOWER(u.username)=:id OR LOWER(u.email)=:id OR LOWER(d.license_no)=:id)
@@ -503,4 +503,4 @@ SELECT v.vehicle_id, v.reg_number, COUNT(m.maintenance_id) AS service_count, NVL
    EXEC book_ticket_proc(1, 4, 20, 'CASH', NULL, :tid);
    EXEC list_trip_passengers(1);
    SELECT get_trip_revenue(1) FROM dual;
-*/
+
