@@ -1,0 +1,346 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SmartMove Transport Solutions</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font:13px/1.5 Inter,Arial,sans-serif;
+  color:#17202a;
+  background:#faf7f3;
+  -webkit-font-smoothing:antialiased
+}
+
+button,input,select{font:inherit}
+button{cursor:pointer}
+
+.auth{
+  min-height:100vh;
+  display:grid;
+  grid-template-columns:1fr 1fr
+}
+
+.side{
+  background:radial-gradient(circle at 18% 12%,rgba(255,255,255,.22),transparent 42%),linear-gradient(150deg,#d95d00,#ff7a00 52%,#ffab5c);
+  color:#fff;
+  padding:56px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  position:relative;
+  overflow:hidden
+}
+
+.side::after{
+  content:"";
+  position:absolute;
+  width:460px;
+  height:460px;
+  border:1px solid rgba(255,255,255,.22);
+  border-radius:50%;
+  right:-170px;
+  bottom:-180px;
+  box-shadow:0 0 0 60px rgba(255,255,255,.05)
+}
+
+.side>*{position:relative;z-index:1}
+
+.mark{
+  width:46px;
+  height:46px;
+  border-radius:14px;
+  background:#fff;
+  color:#e96500;
+  display:grid;
+  place-items:center;
+  font:700 22px 'Playfair Display',Georgia,serif;
+  box-shadow:0 10px 26px rgba(120,50,0,.25)
+}
+
+.side h1{
+  font:600 40px 'Playfair Display',Georgia,serif;
+  margin:20px 0 8px;
+  letter-spacing:-.5px
+}
+
+.side p{
+  max-width:330px;
+  opacity:.93;
+  line-height:1.7;
+  font-size:14px;
+  margin:0
+}
+
+.right{
+  display:grid;
+  place-items:center;
+  padding:24px
+}
+
+.box{
+  width:100%;
+  max-width:380px;
+  background:#fff;
+  border:1px solid #ece7df;
+  border-radius:20px;
+  padding:28px;
+  box-shadow:0 20px 50px rgba(23,32,42,.1)
+}
+
+.tabs{
+  display:flex;
+  gap:4px;
+  background:#f3eee6;
+  padding:3px;
+  border-radius:11px;
+  margin-bottom:20px
+}
+
+.tabs button{
+  flex:1;
+  border:0;
+  background:transparent;
+  padding:8px;
+  border-radius:8px;
+  font-weight:600;
+  font-size:12.5px;
+  color:#7b7468
+}
+
+.tabs button.on{
+  background:#fff;
+  color:#e96500;
+  box-shadow:0 2px 8px rgba(23,32,42,.08)
+}
+
+h2{
+  font:600 22px 'Playfair Display',Georgia,serif;
+  margin:0 0 4px;
+  letter-spacing:-.3px
+}
+
+.sub{
+  color:#8a8f98;
+  font-size:12px;
+  margin:0 0 16px
+}
+
+.field{margin-bottom:12px}
+
+label{
+  display:block;
+  font-size:9.5px;
+  font-weight:700;
+  color:#7d776c;
+  letter-spacing:.9px;
+  text-transform:uppercase;
+  margin-bottom:5px
+}
+
+input,select{
+  display:block;
+  width:100%;
+  height:40px;
+  border:1px solid #ece7df;
+  border-radius:10px;
+  background:#fff;
+  padding:0 12px;
+  color:#3d4148;
+  outline:none;
+  transition:border-color .18s,box-shadow .18s
+}
+
+input:focus,select:focus{
+  border-color:#f3c98b;
+  box-shadow:0 0 0 3px #fff4e8
+}
+
+.err{
+  color:#dc4c4c;
+  font-size:12px;
+  min-height:16px;
+  margin:2px 0 8px
+}
+
+.go{
+  width:100%;
+  height:42px;
+  border:1px solid #e96500;
+  border-radius:10px;
+  background:linear-gradient(145deg,#ff9430,#ff7a00 55%,#e96500);
+  color:#fff;
+  font-weight:600;
+  box-shadow:0 6px 16px rgba(255,122,0,.28),inset 0 1px 0 rgba(255,255,255,.3)
+}
+
+.go:hover{filter:brightness(1.05)}
+
+@media(max-width:800px){
+  .auth{grid-template-columns:1fr}
+  .side{display:none}
+}
+</style>
+</head>
+
+<body>
+
+<section class="auth">
+
+  <div class="side">
+    <div class="mark">S</div>
+    <h1>SmartMove</h1>
+    <p>Plan routes, schedule trips and manage every ticket in one place.</p>
+  </div>
+
+  <div class="right">
+    <div class="box">
+
+      <div class="tabs">
+        <button id="tab-login" class="on" type="button">Log in</button>
+        <button id="tab-signup" type="button">Sign up</button>
+      </div>
+
+      <h2 id="t">Welcome back</h2>
+      <p class="sub" id="s">Log in to continue.</p>
+
+      <div id="auth-form"></div>
+
+    </div>
+  </div>
+
+</section>
+
+<script src="shared.js"></script>
+
+<script>
+const HOME = {
+  Admin: "admin.html",
+  Passenger: "passenger.html",
+  Driver: "driver.html"
+};
+
+try {
+  const s = JSON.parse(sessionStorage.getItem("sm_session") || "null");
+  if (s && s.role && sessionStorage.getItem("sm_token")) location.href = HOME[s.role];
+} catch(e) {}
+
+let mode = "login";
+
+$("#tab-login").onclick = () => {
+  mode = "login";
+  form();
+};
+
+$("#tab-signup").onclick = () => {
+  mode = "signup";
+  form();
+};
+
+function form() {
+  const su = mode === "signup";
+
+  $("#tab-login").classList.toggle("on", !su);
+  $("#tab-signup").classList.toggle("on", su);
+
+  $("#t").textContent = su
+    ? "Create your account"
+    : "Welcome back";
+
+  $("#s").textContent = su
+    ? "Create an account as a passenger or driver."
+    : "Log in to continue.";
+
+  $("#auth-form").innerHTML =
+    (su ? `
+      <div class="field">
+        <label for="a_name">Full name</label>
+        <input id="a_name" autocomplete="name" required>
+      </div>
+
+      <div class="field">
+        <label for="a_role">Role</label>
+        <select id="a_role" required>
+          <option value="Passenger" selected>Passenger</option>
+          <option value="Driver">Driver</option>
+        </select>
+      </div>
+    ` : "") +
+
+    `
+      <div class="field">
+        <label for="a_email">${su ? "Email" : "Email / Username / Licence No"}</label>
+        <input id="a_email" type="${su ? "email" : "text"}" autocomplete="${su ? "email" : "username"}" required>
+      </div>
+
+      <div class="field">
+        <label for="a_pw">Password</label>
+        <input id="a_pw" type="password" autocomplete="${su ? "new-password" : "current-password"}" required>
+      </div>
+    ` +
+
+    (su ? `
+      <div class="field">
+        <label for="a_pw2">Confirm password</label>
+        <input id="a_pw2" type="password" autocomplete="new-password" required>
+      </div>
+    ` : "") +
+
+    `
+      <div class="err" id="a_err"></div>
+      <button class="go" id="a_go" type="button">
+        ${su ? "Create account" : "Log in"}
+      </button>
+    `;
+
+  $("#a_go").onclick = su ? signup : login;
+
+  $("#auth-form").onkeydown = e => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      $("#a_go").click();
+    }
+  };
+}
+
+function enter(r) {
+  sessionStorage.setItem("sm_token", r.token);
+  sessionStorage.setItem("sm_session", JSON.stringify({id: r.user.id, role: r.user.role}));
+  location.href = HOME[r.user.role] || "index.html";
+}
+async function login() {
+  const id = $("#a_email").value.trim();
+  const password = $("#a_pw").value;
+  try { enter(await api("POST", "/api/login", {id, password})); }
+  catch (e) { $("#a_err").textContent = e.message; }
+}
+async function signup() {
+  const name = $("#a_name").value.trim();
+  const role = $("#a_role").value;
+  const email = $("#a_email").value.trim();
+  const pw = $("#a_pw").value;
+  const e = $("#a_err");
+  if (!name || !/^\S+@\S+\.\S+$/.test(email)) {
+    return e.textContent = "Enter your name and a valid email.";
+  }
+  if (pw.length < 6) {
+    return e.textContent = "Password needs 6+ characters.";
+  }
+  if (pw !== $("#a_pw2").value) {
+    return e.textContent = "Passwords don't match.";
+  }
+  try { enter(await api("POST", "/api/signup", {name, role, email, password: pw})); }
+  catch (x) { e.textContent = x.message; }
+}
+form();
+</script>
+
+</body>
+</html>
