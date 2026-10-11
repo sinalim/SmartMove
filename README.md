@@ -14,7 +14,7 @@ SmartMove lets passengers search trips, book seats and pay by card or cash. Admi
 
 ## Tech stack
 - Frontend: HTML, CSS, JavaScript
-- Backend: Node.js
+- Backend: Node.js , REST API
 - Oracle Database: users, routes, vehicles, trips, tickets, payments, maintenance, ratings
 - MongoDB: announcements, review comments, vehicle photos and documents
 
